@@ -169,6 +169,5 @@ module.exports.loop = function () {
     // write name of cs spawn with role
     if (!(name < 0)) {
         console.log('Spawn ' + name + ': ' + NewRole);
-        Memory.stats.numToCs += 1
     }
 };
