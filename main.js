@@ -73,7 +73,14 @@ module.exports.loop = function () {
         var minUp = 1
         var minRe = 0
     }
-
+    
+    if (energyCap <= 550) {
+        var minHa = 2
+        var minUp = 4
+        var minBu = 1
+        var minRe = 2
+        var minDi = 7
+    }
     if (numHa < minHa) {
         // try to spawn one harvester
         if (energyCap == 300) {
@@ -176,7 +183,7 @@ module.exports.loop = function () {
         else if (energyCap <= 550) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
                 {role: 'distant harvester', working: false});
-            var NewRole = 'bdistant harvesteruilder';
+            var NewRole = 'distant harvester';
         }
         else if (energyCap <= 800) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
