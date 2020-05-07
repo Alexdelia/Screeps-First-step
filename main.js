@@ -36,14 +36,32 @@ module.exports.loop = function () {
             roleDi.run(creep);
         }
     }
-    
+    var home = Game.spawns.Spawn1.room.name;
     var towers = Game.rooms.W26S29.find(FIND_STRUCTURES, {
         filter: (s) => s.structureType == STRUCTURE_TOWER
     });
     for (let tower of towers) {
         var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        var notWall = tower.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL});
         if (target != undefined) {
             tower.attack(target);
+        }
+        else if (notWall !=undefined) {
+            tower.repair(notWall)
+        }
+        else {
+            // find closest structure with less than max hits
+            // Exclude walls because they have way too many max hits and would keep
+            // our repairers busy forever. We have to find a solution for that later.
+            var structure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            // the second argument for findClosestByPath is an object which takes
+            // a property called filter which can be a function
+            // we use the arrow operator to define it
+                filter: (s) => s.hits < s.hitsMax});
+            // if we find one
+            if (structure != undefined) {
+                tower.repair(structure)
+            }
         }
     }
     
@@ -56,8 +74,8 @@ module.exports.loop = function () {
     var minBu = 2
     var minRe = 3
     
-    var minDiN = 0
-    var minDiW = 0
+    var minDiN = 5
+    var minDiW = 3
     var minDiS = 0
     var minDiE = 0
     
@@ -77,14 +95,6 @@ module.exports.loop = function () {
     if (energyCap == 300) {
         var minHa = 10    
     }
-    if (numUp < 1) {
-        var minHa = 1
-    }
-    if (numBu < 1) {
-        var minHa = 4
-        var minUp = 1
-        var minRe = 0
-    }
     
     if (energyCap <= 550) {
         var minHa = 2
@@ -93,6 +103,21 @@ module.exports.loop = function () {
         var minRe = 2
         var minDi = 7
     }
+    
+    if (towers != undefined) {
+        var minRe = 1
+    }
+    
+    // last var needed
+        if (numUp < 1) {
+        var minHa = 1
+    }
+    if (numBu < 1) {
+        var minHa = 4
+        var minUp = 1
+        var minRe = 0
+    }
+    // to this point
     
     // check if enough of distant harvester in each direction
     if (numDiN < minDiN) {
@@ -111,7 +136,7 @@ module.exports.loop = function () {
     
     if (numHa < minHa) {
         // try to spawn one harvester
-        if (energyCap == 300) {
+        if (energyCap <=400) {
             // First step, no extension
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                 {role: 'harvester', working: false});
@@ -124,7 +149,7 @@ module.exports.loop = function () {
             var NewRole = 'first harvester because all die'
             };
         }
-        else if (energyCap <= 550) {
+        else if (energyCap <= 650) {
             // Second step, 5 extension
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,
                 {role: 'harvester', working: false});
@@ -137,7 +162,7 @@ module.exports.loop = function () {
             var NewRole = 'first harvester because all die'
             };
         }
-        else if (energyCap <= 800) {
+        else if (energyCap <= 900) {
             // Third step, 10 extension
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                 {role: 'harvester', working: false});
@@ -204,17 +229,17 @@ module.exports.loop = function () {
     }
     else if (numDi < minDi) {
         if (energyCap == 300) {
-            name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
+            name = Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined,
                 {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
         else if (energyCap <= 550) {
-            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
+            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                 {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
         else if (energyCap <= 800) {
-            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
+            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                 {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
