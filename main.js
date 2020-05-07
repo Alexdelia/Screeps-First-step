@@ -3,6 +3,7 @@ var roleUp = require ('role.up');
 var roleBu = require ('role.bu');
 var roleRe = require ('role.re');
 var roleDi = require ('role.di');
+var roleSdi = require ('role.sdi');
 
 module.exports.loop = function () {
     // check for memory entries of died creeps by iterating over Memory.creeps
@@ -54,13 +55,24 @@ module.exports.loop = function () {
     var minUp = 4
     var minBu = 2
     var minRe = 3
-    var minDi = 5
+    
+    var minDiN = 0
+    var minDiW = 0
+    var minDiS = 0
+    var minDiE = 0
+    
+    var minDi = minDiN + minDiW + minDiS + minDiE
     
     var numHa = _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
     var numUp = _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
     var numBu = _.sum(Game.creeps, (c) => c.memory.role == 'builder');
     var numRe = _.sum(Game.creeps, (c) => c.memory.role == 'repairer');
     var numDi = _.sum(Game.creeps, (c) => c.memory.role == 'distant harvester');
+    
+    var numDiN = _.sum(Game.creeps, (c) => c.memory.compas == 'north');
+    var numDiW = _.sum(Game.creeps, (c) => c.memory.compas == 'west');
+    var numDiS = _.sum(Game.creeps, (c) => c.memory.compas == 'south');
+    var numDiE = _.sum(Game.creeps, (c) => c.memory.compas == 'east');
     
     if (energyCap == 300) {
         var minHa = 10    
@@ -81,6 +93,22 @@ module.exports.loop = function () {
         var minRe = 2
         var minDi = 7
     }
+    
+    // check if enough of distant harvester in each direction
+    if (numDiN < minDiN) {
+        var compasV = 'north';
+    }
+    else if (numDiW < minDiW) {
+        var compasV = 'west'
+    }
+    else if (numDiS < minDiS) {
+        var compasV = 'south'
+    }
+    else if (numDiE < minDiE) {
+        var compasV = 'east'
+    }
+    
+    
     if (numHa < minHa) {
         // try to spawn one harvester
         if (energyCap == 300) {
@@ -177,17 +205,17 @@ module.exports.loop = function () {
     else if (numDi < minDi) {
         if (energyCap == 300) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
-                {role: 'distant harvester', working: false});
+                {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
         else if (energyCap <= 550) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
-                {role: 'distant harvester', working: false});
+                {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
         else if (energyCap <= 800) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
-                {role: 'distant harvester', working: false});
+                {role: 'distant harvester', working: false, compas: compasV});
             var NewRole = 'distant harvester';
         }
     }
