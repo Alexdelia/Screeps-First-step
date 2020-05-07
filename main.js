@@ -32,7 +32,7 @@ module.exports.loop = function () {
         }
     }
     
-    var towers = Game.rooms.W32N23.find(FIND_STRUCTURES, {
+    var towers = Game.rooms.W26S29.find(FIND_STRUCTURES, {
         filter: (s) => s.structureType == STRUCTURE_TOWER
     });
     for (let tower of towers) {
@@ -44,7 +44,7 @@ module.exports.loop = function () {
     
     // control the number of cs
     
-    var energyCap = Game.rooms.W32N23.energyCapacityAvailable
+    var energyCap = Game.rooms.W26S29.energyCapacityAvailable
     
     var minHa = 5
     var minUp = 4
@@ -55,6 +55,13 @@ module.exports.loop = function () {
     var numUp = _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
     var numBu = _.sum(Game.creeps, (c) => c.memory.role == 'builder');
     var numRe = _.sum(Game.creeps, (c) => c.memory.role == 'repairer');
+    
+    if (energyCap == 300) {
+        var minHa = 10    
+    }
+    if (numUp < 1) {
+        var minHa = 1
+    }
 
     if (numHa < minHa) {
         // try to spawn one harvester

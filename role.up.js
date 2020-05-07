@@ -20,9 +20,9 @@ module.exports = {
             // if (creep.transfer(creep.room.controller, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 
             // try to upgrade the controller
-            if (creep.upgradeController(Game.getObjectById('5bbcab339099fc012e633147')) == ERR_NOT_IN_RANGE) {
+            if (creep.upgradeController(Game.getObjectById('5bbcab839099fc012e633aaa')) == ERR_NOT_IN_RANGE) {
                 // if not in range, move towards the controller
-                creep.moveTo(Game.getObjectById('5bbcab339099fc012e633147'), {visualizePathStyle: {stroke: '#15ff00'}});
+                creep.moveTo(Game.getObjectById('5bbcab839099fc012e633aaa'), {visualizePathStyle: {stroke: '#15ff00'}});
             }
         }
         // if creep is supposed to harvest energy from source
