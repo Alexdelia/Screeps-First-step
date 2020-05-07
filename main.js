@@ -49,7 +49,7 @@ module.exports.loop = function () {
     var minHa = 5
     var minUp = 4
     var minBu = 2
-    var minRe = 1
+    var minRe = 3
     
     var numHa = _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
     var numUp = _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
@@ -169,5 +169,6 @@ module.exports.loop = function () {
     // write name of cs spawn with role
     if (!(name < 0)) {
         console.log('Spawn ' + name + ': ' + NewRole);
+        Memory.stats.numToCs += 1
     }
 };
