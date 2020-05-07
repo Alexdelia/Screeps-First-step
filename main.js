@@ -62,6 +62,11 @@ module.exports.loop = function () {
     if (numUp < 1) {
         var minHa = 1
     }
+    if (numBu < 1) {
+        var minHa = 4
+        var minUp = 1
+        var minRe = 0
+    }
 
     if (numHa < minHa) {
         // try to spawn one harvester
@@ -105,7 +110,7 @@ module.exports.loop = function () {
             };
         }
     }
-    if (numUp < minUp) {
+    else if (numUp < minUp) {
         if (energyCap == 300) {
             name = Game.spawns.Spawn1.createCreep([WORK,CARRY,MOVE,MOVE,MOVE], undefined,
                 {role: 'upgrader', working: false});
@@ -122,7 +127,7 @@ module.exports.loop = function () {
             var NewRole = 'upgrader';
         }
     }
-    if (numRe < minRe) {
+    else if (numRe < minRe) {
         if (energyCap == 300) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                 {role: 'repairer', working: false});
@@ -139,7 +144,7 @@ module.exports.loop = function () {
             var NewRole = 'repairer';
         }
     }
-    if (numBu < minBu) {
+    else if (numBu < minBu) {
         if (energyCap == 300) {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                 {role: 'builder', working: false});
