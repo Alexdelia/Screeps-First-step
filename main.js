@@ -1,7 +1,8 @@
-var roleHa = require ('role.ha')
-var roleUp = require ('role.up')
-var roleBu = require ('role.bu')
-var roleRe = require ('role.re')
+var roleHa = require ('role.ha');
+var roleUp = require ('role.up');
+var roleBu = require ('role.bu');
+var roleRe = require ('role.re');
+var roleDi = require ('role.di');
 
 module.exports.loop = function () {
     // check for memory entries of died creeps by iterating over Memory.creeps
@@ -30,6 +31,9 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'repairer') {
             roleRe.run(creep);
         }
+        else if (creep.memory.role == 'distant harvester') {
+            roleDi.run(creep);
+        }
     }
     
     var towers = Game.rooms.W26S29.find(FIND_STRUCTURES, {
@@ -50,11 +54,13 @@ module.exports.loop = function () {
     var minUp = 4
     var minBu = 2
     var minRe = 3
+    var minDi = 5
     
     var numHa = _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
     var numUp = _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
     var numBu = _.sum(Game.creeps, (c) => c.memory.role == 'builder');
     var numRe = _.sum(Game.creeps, (c) => c.memory.role == 'repairer');
+    var numDi = _.sum(Game.creeps, (c) => c.memory.role == 'distant harvester');
     
     if (energyCap == 300) {
         var minHa = 10    
@@ -159,6 +165,23 @@ module.exports.loop = function () {
             name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                 {role: 'builder', working: false});
             var NewRole = 'builder';
+        }
+    }
+    else if (numDi < minDi) {
+        if (energyCap == 300) {
+            name = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE], undefined,
+                {role: 'distant harvester', working: false});
+            var NewRole = 'distant harvester';
+        }
+        else if (energyCap <= 550) {
+            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
+                {role: 'distant harvester', working: false});
+            var NewRole = 'bdistant harvesteruilder';
+        }
+        else if (energyCap <= 800) {
+            name = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
+                {role: 'distant harvester', working: false});
+            var NewRole = 'distant harvester';
         }
     }
     else {
