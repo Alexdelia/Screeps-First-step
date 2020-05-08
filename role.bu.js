@@ -3,6 +3,11 @@ var roleUp = require('role.up');
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
+        
+        // if no constructionSite is found
+        var towerNotFill = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            // find only tower
+            filter: (s) => (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity});
         // if creep is trying to complete a constructionSite but has no energy left
         if (creep.memory.working == true && creep.carry.energy == 0) {
             // switch state
@@ -35,7 +40,14 @@ module.exports = {
                     creep.moveTo(constructionSite, {visualizePathStyle: {stroke: '#ff8c00'}});
                 }
             }
-            // if no constructionSite is found
+            else if (towerNotFill != undefined) {
+                creep.say('🕋')
+                // try to transfer energy, if it is not in range
+                if (creep.transfer(towerNotFill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    // move towards it
+                    creep.moveTo(towerNotFill);
+                }
+            }
             else {
                 // go upgrading the controller
                 roleUp.run(creep);

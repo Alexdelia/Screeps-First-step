@@ -1,6 +1,12 @@
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
+        
+        // if no constructionSite is found
+        var towerNotFill = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            // find only tower
+            filter: (s) => (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity});
+            
         // if creep is bringing energy to the spawn but has no energy left
         if (creep.memory.working == true && creep.store[RESOURCE_ENERGY] == 0) {
             // switch state
@@ -21,17 +27,23 @@ module.exports = {
                 // a property called filter which can be a function
                 // we use the arrow operator to define it
                 filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                             || s.structureType == STRUCTURE_EXTENSION
-                             || s.structureType == STRUCTURE_TOWER)
+                             || s.structureType == STRUCTURE_EXTENSION)
                              && s.energy < s.energyCapacity
             });
-
             // if we found one
             if (structure != undefined) {
                 // try to transfer energy, if it is not in range
                 if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     // move towards it
                     creep.moveTo(structure);
+                }
+            }
+            else if (towerNotFill != undefined) {
+                creep.say('🕋')
+                // try to transfer energy, if it is not in range
+                if (creep.transfer(towerNotFill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    // move towards it
+                    creep.moveTo(towerNotFill);
                 }
             }
         }
