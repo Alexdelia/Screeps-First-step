@@ -115,10 +115,11 @@ module.exports.loop = function () {
         var name = undefined;
         
         
-        var minHa = 5
+        /*var minHa = 5
         var minUp = 4
         var minBu = 2
         var minRe = 3
+        */
         
         var numHa = _.sum(creepsInRoom, (c) => c.memory.role == 'harvester');
         var numUp = _.sum(creepsInRoom, (c) => c.memory.role == 'upgrader');
@@ -133,6 +134,8 @@ module.exports.loop = function () {
         
         var numDi = numDiN + numDiW + numDiS + numDiE
         
+        
+        /*
         if (energyCap == 300) {
             var minHa = 10    
         }
@@ -158,6 +161,7 @@ module.exports.loop = function () {
             var minRe = 0
         }
         // to this point
+        */
         
         // transfer to memory of each spawner
         
