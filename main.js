@@ -216,7 +216,7 @@ module.exports.loop = function () {
                     // spawn one with what is available
                     name = spawn.Spawn1.createCreep([WORK,CARRY,MOVE], undefined,
                         {role: 'harvester', working: false});
-                    var NewRole = 'first harvester because all die'
+                    var NewRole = 'first harvester because all died'
                     };
                 }
                 else if (energyCap <= 900) {
@@ -225,9 +225,9 @@ module.exports.loop = function () {
                         {role: 'harvester', working: false});
                     var NewRole = 'harvester';
                     // if no one is left
-                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0) {
+                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0 && numDi == 0) {
                     // spawn one with what is available
-                    name = spawn.Spawn1.createCreep([WORK,CARRY,MOVE], undefined,
+                    name = spawn.createCreep([WORK,CARRY,MOVE], undefined,
                         {role: 'harvester', working: false});
                     var NewRole = 'first harvester because all die'
                     };
