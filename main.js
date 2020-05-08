@@ -171,6 +171,8 @@ module.exports.loop = function () {
             var compasV = 'east'
         }
         
+        homeSpawn = spawn.room.name
+        
         if (numHa < spawn.memory.minHa) {
             // try to spawn one harvester
             if (energyCap <=400) {
@@ -267,17 +269,17 @@ module.exports.loop = function () {
         else if (numDi < minDi) {
             if (energyCap == 300) {
                 name = spawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined,
-                    {role: 'distant harvester', working: false, compas: compasV});
+                    {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                 var NewRole = 'distant harvester';
             }
             else if (energyCap <= 550) {
                 name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
-                    {role: 'distant harvester', working: false, compas: compasV});
+                    {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                 var NewRole = 'distant harvester';
             }
             else if (energyCap <= 800) {
                 name = spawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
-                    {role: 'distant harvester', working: false, compas: compasV});
+                    {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                 var NewRole = 'distant harvester';
             }
         }
