@@ -15,6 +15,52 @@ module.exports.loop = function () {
         }
     }
     
+    for (let spawnName in Game.spawns) {
+        let spawn = Game.spawns[spawnName];
+        let creepsInRoom = spawn.room.find(FIND_MY_CREEPS);
+        
+        for (let name in Game.creeps) {
+            var creep = Game.creeps[name];
+            
+            if (creep.role = 'distant harvester') {
+                
+                Game.spawns.Spawn1.memory.minDiN = 6;
+                Game.spawns.Spawn1.memory.minDiW = 5;
+                Game.spawns.Spawn1.memory.minDiS = 0;
+                Game.spawns.Spawn1.memory.minDiE = 0;
+                
+                var minDiN = Game.spawns.Spawn1.memory.minDiN
+                var minDiW = Game.spawns.Spawn1.memory.minDiW
+                var minDiS = Game.spawns.Spawn1.memory.minDiS
+                var minDiE = Game.spawns.Spawn1.memory.minDiE
+                
+                var minDi = minDiN + minDiW + minDiS + minDiE
+                
+                var numDi = _.sum(Game.creeps, (c) => c.memory.role == 'distant harvester');
+                
+                var numDiN = _.sum(Game.creeps, (c) => c.memory.compas == 'north');
+                var numDiW = _.sum(Game.creeps, (c) => c.memory.compas == 'west');
+                var numDiS = _.sum(Game.creeps, (c) => c.memory.compas == 'south');
+                var numDiE = _.sum(Game.creeps, (c) => c.memory.compas == 'east');
+                
+                var numDi = numDiN + numDiW + numDiS + numDiE
+                
+                if (numDiN < spawn.memory.minDiN) {
+                    creep.memory.compas = 'north';
+                }
+                else if (numDiW < spawn.memory.minDiW) {
+                    creep.memory.compas = 'west'
+                }
+                else if (numDiS < spawn.memory.minDiS) {
+                    creep.memory.compas = 'south'
+                }
+                else if (numDiE < spawn.memory.minDiE) {
+                    creep.memory.compas = 'east'
+                }
+            }
+        }
+    }
+    
     for (let name in Game.creeps) {
         var creep = Game.creeps[name];
         
@@ -59,11 +105,6 @@ module.exports.loop = function () {
         }
     }
     
-    Game.spawns.Spawn1.memory.minDiN = 5
-    Game.spawns.Spawn1.memory.minDiW = 3
-    Game.spawns.Spawn1.memory.minDiS = 0
-    Game.spawns.Spawn1.memory.minDiE = 0
-    
     for (let spawnName in Game.spawns) {
         let spawn = Game.spawns[spawnName];
         let creepsInRoom = spawn.room.find(FIND_MY_CREEPS);
@@ -78,13 +119,6 @@ module.exports.loop = function () {
         var minUp = 4
         var minBu = 2
         var minRe = 3
-        
-        var minDiN = 5
-        var minDiW = 3
-        var minDiS = 0
-        var minDiE = 0
-        
-        var minDi = minDiN + minDiW + minDiS + minDiE
         
         var numHa = _.sum(creepsInRoom, (c) => c.memory.role == 'harvester');
         var numUp = _.sum(creepsInRoom, (c) => c.memory.role == 'upgrader');
@@ -128,8 +162,8 @@ module.exports.loop = function () {
         // transfer to memory of each spawner
         
         spawn.memory.minHa = 5
-        spawn.memory.minUp = 6
-        spawn.memory.minBu = 2
+        spawn.memory.minUp = 4
+        spawn.memory.minBu = 4
         spawn.memory.minRe = 3
         
         if (energyCap == 300) {
@@ -199,12 +233,11 @@ module.exports.loop = function () {
                         {role: 'harvester', working: false});
                     var NewRole = 'harvester';
                     // if no one is left
-                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0) {
+                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0 && numDi == 0) {
                     // spawn one with what is available
                     name = spawn.createCreep([WORK,CARRY,MOVE], undefined,
                         {role: 'harvester', working: false});
-                    var NewRole = 'first harvester because all die'
-                    };
+                    var NewRole = 'first harvester because all die'};
                 }
                 else if (energyCap <= 650) {
                     // Second step, 5 extension
@@ -212,12 +245,11 @@ module.exports.loop = function () {
                         {role: 'harvester', working: false});
                     var NewRole = 'harvester';
                     // if no one is left
-                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0) {
+                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0 && numDi == 0) {
                     // spawn one with what is available
                     name = spawn.Spawn1.createCreep([WORK,CARRY,MOVE], undefined,
                         {role: 'harvester', working: false});
-                    var NewRole = 'first harvester because all died'
-                    };
+                    var NewRole = 'first harvester because all died'};
                 }
                 else if (energyCap <= 900) {
                     // Third step, 10 extension
@@ -229,8 +261,31 @@ module.exports.loop = function () {
                     // spawn one with what is available
                     name = spawn.createCreep([WORK,CARRY,MOVE], undefined,
                         {role: 'harvester', working: false});
-                    var NewRole = 'first harvester because all die'
-                    };
+                    var NewRole = 'first harvester because all die'};
+                }
+                else if (energyCap <= 1150) {
+                    // fourth step, 15 extension
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'harvester', working: false});
+                    var NewRole = 'harvester';
+                    // if no one is left
+                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0 && numDi == 0) {
+                    // spawn one with what is available
+                    name = spawn.createCreep([WORK,CARRY,MOVE], undefined,
+                        {role: 'harvester', working: false});
+                    var NewRole = 'first harvester because all die'};
+                }
+                else if (energyCap <= 1400) {
+                    // fifth step, 20 extension
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'harvester', working: false});
+                    var NewRole = 'harvester';
+                    // if no one is left
+                    if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0 && numDi == 0) {
+                    // spawn one with what is available
+                    name = spawn.createCreep([WORK,CARRY,MOVE], undefined,
+                        {role: 'harvester', working: false});
+                    var NewRole = 'first harvester because all die'};
                 }
             }
             else if (numUp < spawn.memory.minUp) {
@@ -249,23 +304,37 @@ module.exports.loop = function () {
                         {role: 'upgrader', working: false});
                     var NewRole = 'upgrader';
                 }
+                else if (energyCap <= 1050) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'upgrader', working: false});
+                    var NewRole = 'upgrader';
+                }
+                else if (energyCap <= 1300) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'upgrader', working: false});
+                    var NewRole = 'upgrader';
+                }
             }
             else if (numDi < minDi) {
                 
-                if (numDiN < spawn.memory.minDiN) {
+                if (numDiN > spawn.memory.minDiN) {
                     var compasV = 'north';
                 }
-                else if (numDiW < spawn.memory.minDiW) {
+                if (numDiW > spawn.memory.minDiW) {
                     var compasV = 'west'
                 }
-                else if (numDiS < spawn.memory.minDiS) {
+                if (numDiS > spawn.memory.minDiS) {
                     var compasV = 'south'
                 }
-                else if (numDiE < spawn.memory.minDiE) {
+                if (numDiE > spawn.memory.minDiE) {
                     var compasV = 'east'
                 }
-                else {
-                    console.log('enough distant harvester on each direction, (compasV: ' + compasV + ')')
+                if (numDiN >= spawn.memory.minDiN && numDiW >= spawn.memory.minDiW && numDiW >= spawn.memory.minDiW && numDiE >= spawn.memory.minDiE) {
+                    console.log('enough distant harvester on each direction, (compasV return: ' + compasV + ')');
+                    console.log('di north: ' + numDiN);
+                    console.log('di west: ' + numDiW);
+                    console.log('di south: ' + numDiS);
+                    console.log('di east: ' + numDiE);
                 }
                 
                 if (energyCap == 300) {
@@ -280,6 +349,16 @@ module.exports.loop = function () {
                 }
                 else if (energyCap <= 800) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                    var NewRole = 'distant harvester';
+                }
+                else if (energyCap <= 1050) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                    var NewRole = 'distant harvester';
+                }
+                else if (energyCap <= 1300) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
@@ -300,6 +379,16 @@ module.exports.loop = function () {
                         {role: 'repairer', working: false});
                     var NewRole = 'repairer';
                 }
+                else if (energyCap <= 1050) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'repairer', working: false});
+                    var NewRole = 'repairer';
+                }
+                else if (energyCap <= 1300) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'repairer', working: false});
+                    var NewRole = 'repairer';
+                }
             }
             else if (numBu < spawn.memory.minBu) {
                 if (energyCap == 300) {
@@ -317,12 +406,22 @@ module.exports.loop = function () {
                         {role: 'builder', working: false});
                     var NewRole = 'builder';
                 }
+                else if (energyCap <= 1050) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'builder', working: false});
+                    var NewRole = 'builder';
+                }
+                else if (energyCap <= 1300) {
+                    name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
+                        {role: 'builder', working: false});
+                    var NewRole = 'builder';
+                }
             }
             
             else if (numDi > 0 
                 && numHa > 0
-                && numUp >= 6
-                && numBu >= 2
+                && numUp >= spawn.memory.minUp
+                && numBu >= spawn.memory.minBu
                 && numRe > 0) {
                 
                 var numTotal = (_.sum(Game.creeps, (c) => c.memory.working == true) + _.sum(Game.creeps, (c) => c.memory.working == false))

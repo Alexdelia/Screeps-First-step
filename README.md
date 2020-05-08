@@ -1,1 +1,1 @@
-the start of my code for the game Screeps, most of the code is not mine.
+The start of my code in Screeps.
