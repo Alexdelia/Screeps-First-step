@@ -65,6 +65,11 @@ module.exports.loop = function () {
         }
     }
     
+    Game.spawns.Spawn1.memory.minDiN = 5
+    Game.spawns.Spawn1.memory.minDiW = 3
+    Game.spawns.Spawn1.memory.minDiS = 0
+    Game.spawns.Spawn1.memory.minDiE = 0
+    
     for (let spawnName in Game.spawns) {
         let spawn = Game.spawns[spawnName];
         let creepsInRoom = spawn.room.find(FIND_CREEPS);
@@ -158,16 +163,16 @@ module.exports.loop = function () {
         // to this point
         
         // check if enough of distant harvester in each direction
-        if (numDiN < minDiN) {
+        if (numDiN < spawn.memory.minDiN) {
             var compasV = 'north';
         }
-        else if (numDiW < minDiW) {
+        else if (numDiW < spawn.memory.minDiW) {
             var compasV = 'west'
         }
-        else if (numDiS < minDiS) {
+        else if (numDiS < spawn.memory.minDiS) {
             var compasV = 'south'
         }
-        else if (numDiE < minDiE) {
+        else if (numDiE < spawn.memory.minDiE) {
             var compasV = 'east'
         }
         
@@ -203,13 +208,13 @@ module.exports.loop = function () {
             }
             else if (energyCap <= 900) {
                 // Third step, 10 extension
-                name = Game.spawn.Spawn1.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
+                name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                     {role: 'harvester', working: false});
                 var NewRole = 'harvester';
                 // if no one is left
                 if (name == ERR_NOT_ENOUGH_ENERGY && numHa == 0) {
                 // spawn one with what is available
-                name = Game.spawn.Spawn1.createCreep([WORK,CARRY,MOVE], undefined,
+                name = spawn.Spawn1.createCreep([WORK,CARRY,MOVE], undefined,
                     {role: 'harvester', working: false});
                 var NewRole = 'first harvester because all die'
                 };
