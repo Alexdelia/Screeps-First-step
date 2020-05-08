@@ -6,19 +6,40 @@
             let spawn = Game.spawns[spawnName];
             let creepsInRoom = spawn.room.find(FIND_CREEPS);
             
-            var home = creep.memory.homeSpawn;
-            var cut = home.split('');
+            
+            
+            var home = creep.memory.HomeSpawn;
+            var cut = [];
+            
+            var le = home.length;
+            var i = 0;
+            
+            for (i = 0; i < le; i++) {
+                if (isNaN(home.charAt(i)) == true) {
+                    cut.push(home.charAt(i))
+                }
+                else {
+                    if (!isNaN(home.charAt(i - 1)) == true) {
+                        cut.push(number + (home.charAt(i)))
+                    }
+                    else {
+                        var number = home.charAt(i);
+                    }
+                }
+            }
+            
             var WE = cut[0];
-            var WEX = cut[1]+cut[2];
-            var NS = cut[3];
-            var NSX = cut[4]+cut[5];
+            var WEX = cut[1]
+            var NS = cut[2]
+            var NSX = cut[3]
             
             var Gn = NSX - 1;
             var Gw = WEX + 1;
             var Gs = NSX + 1;
             var Ge = WEX - 1;
             
-            console.log('north is: ' + WE + Gn + NS + NSX)
+            // console.log('Base is: ' + WE + WEX + NS + NSX)
+            // console.log('north is: ' + WE + WEX + NS + Gn)
             
             if (creep.memory.compas = 'north') {
                 var outside = WE + WEX + NS + Gn
@@ -45,13 +66,7 @@
             }
             // if creep is supposed to transfer energy to the spawn or an extension
             if (creep.memory.working == true) {
-                if (creep.room != outside) {
-                    creep.say('🌏');
-                    var exitDir = Game.map.findExit(outside, home);
-                    var exit = creep.pos.findClosestByPath(exitDir);
-                    creep.moveTo(exit)
-                }
-                else {
+                if (creep.room.name == home) {
                     creep.say('📤');
                     // creep.moveTo(new RoomPosition(21, 3,'W26S28'));
                     // find closest spawn or extension which is not full
@@ -73,6 +88,12 @@
                         }
                     }
                 }
+                else {
+                    creep.say('🌏');
+                    var exitDir = Game.map.findExit(outside, home);
+                    var exit = creep.pos.findClosestByPath(exitDir);
+                    creep.moveTo(exit);
+                }
             }
             // code of up
             // try to upgrade the controller
@@ -81,13 +102,8 @@
             // creep.moveTo(Game.getObjectById('5bbcab839099fc012e633aaa'), {visualizePathStyle: {stroke: '#15ff00'}});
             // if creep is supposed to harvest energy from source
             else {
-                if (creep.room != home) {
-                    creep.say('🌏');
-                    var exitDir = Game.map.findExit(home, outside);
-                    var exit = creep.pos.findClosestByPath(exitDir);
-                    creep.moveTo(exit)
-                }
-                else {
+                // if in target room
+                if (creep.room.name == creep.memory.target) {            
                     // find closest source
                     creep.say('📥');
                     var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
@@ -96,6 +112,12 @@
                         // move towards the source
                         creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
                     }
+                }
+                else {
+                    creep.say('🌏');
+                    var exitDir = Game.map.findExit(home, outside);
+                    var exit = creep.pos.findClosestByPath(exitDir);
+                    creep.moveTo(exit)
                 }
             }
         }

@@ -3,6 +3,15 @@ var roleUp = require('role.up');
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
+        // if target is defined and creep is not in target room
+        if (creep.memory.target != undefined && creep.room.name != creep.memory.target) {
+            // find exit to target room
+            var exit = creep.room.findExitTo(creep.memory.target);
+            // move to exit
+            creep.moveTo(creep.pos.findClosestByRange(exit));
+            // return the function to not do anything else
+            return;
+        }
         
         // if no constructionSite is found
         var towerNotFill = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {

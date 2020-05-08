@@ -40,12 +40,16 @@ module.exports.loop = function () {
     var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
     for (let tower of towers) {
         var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        var notWall = tower.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL});
+        var notWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL});
+        var lowWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < 300000 && s.structureType == STRUCTURE_WALL})
         if (target != undefined) {
             tower.attack(target);
         }
         else if (notWall !=undefined) {
-            tower.repair(notWall)
+            tower.repair(notWall);
+        }
+        else if (lowWall != undefined) {
+            tower.repair(lowWall);
         }
         else {
             // find closest structure with less than max hits
@@ -63,8 +67,8 @@ module.exports.loop = function () {
         }
     }
     
-    Game.spawns.Spawn1.memory.minDiN = 5
-    Game.spawns.Spawn1.memory.minDiW = 3
+    Game.spawns.Spawn1.memory.minDiN = 0
+    Game.spawns.Spawn1.memory.minDiW = 0
     Game.spawns.Spawn1.memory.minDiS = 0
     Game.spawns.Spawn1.memory.minDiE = 0
     
@@ -81,8 +85,8 @@ module.exports.loop = function () {
         var minBu = 2
         var minRe = 3
         
-        var minDiN = 5
-        var minDiW = 3
+        var minDiN = 0
+        var minDiW = 0
         var minDiS = 0
         var minDiE = 0
         
