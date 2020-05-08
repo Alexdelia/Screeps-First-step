@@ -3,6 +3,9 @@ var roleBu = require('role.bu');
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
+        
+        var canFillTower = true
+        
         // if creep is trying to complete a constructionSite but has no energy left
         if (creep.memory.working == true && creep.carry.energy == 0) {
             // switch state
@@ -28,6 +31,19 @@ module.exports = {
                 filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL
             });
             // if we find one
+            var towerNotFill = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            // find only tower
+            filter: (s) => (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity});
+            
+            if (towerNotFill != undefined && canFillTower == true) {
+                creep.say('🕋')
+                // try to transfer energy, if it is not in range
+                if (creep.transfer(towerNotFill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    // move towards it
+                    creep.moveTo(towerNotFill);
+                }
+            }
+            
             if (structure != undefined) {
                 // try to repair it, if it is out of range
                 if (creep.repair(structure) == ERR_NOT_IN_RANGE) {
@@ -35,6 +51,7 @@ module.exports = {
                     creep.moveTo(structure, {visualizePathStyle: {stroke: '#ffc300'}});
                 }
             }
+            
             // if we can't fine one
             else {
                 // look for construction sites

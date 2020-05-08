@@ -11,7 +11,18 @@
             var home = creep.memory.HomeSpawn;
             var cut = [];
             
-            var le = home.length;
+            // var le = Object.keys(creep.memory.HomeSpawn).length;
+            // var le = 6
+            
+            // if (creep.memory.HomeSpawn != undefined) {
+            //    le = home.length
+            //}
+            //else {
+            //    var le = 6
+            //}
+            
+            var le = home.length
+            
             var i = 0;
             
             for (i = 0; i < le; i++) {
@@ -103,7 +114,7 @@
             // if creep is supposed to harvest energy from source
             else {
                 // if in target room
-                if (creep.room.name == creep.memory.target) {            
+                if (creep.room.name == outside) {            
                     // find closest source
                     creep.say('📥');
                     var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);

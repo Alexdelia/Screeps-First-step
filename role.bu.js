@@ -3,6 +3,9 @@ var roleUp = require('role.up');
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
+        
+        var canFillTower = false
+        
         // if target is defined and creep is not in target room
         if (creep.memory.target != undefined && creep.room.name != creep.memory.target) {
             // find exit to target room
@@ -49,7 +52,7 @@ module.exports = {
                     creep.moveTo(constructionSite, {visualizePathStyle: {stroke: '#ff8c00'}});
                 }
             }
-            else if (towerNotFill != undefined) {
+            else if (towerNotFill != undefined && canFillTower == true) {
                 creep.say('🕋')
                 // try to transfer energy, if it is not in range
                 if (creep.transfer(towerNotFill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
