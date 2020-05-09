@@ -152,6 +152,10 @@ module.exports.loop = function () {
             spawn.memory.minDi = 7
         }
         
+        if (energyCap >= 1150 && energyCap <= 1400) {
+            spawn.memory.minUp = 4
+        }
+        
         if (towers != undefined) {
             spawn.memory.minRe = 1
         }

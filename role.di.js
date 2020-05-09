@@ -22,17 +22,21 @@
             
             var numDi = numDiN + numDiW + numDiS + numDiE
             
-            if (numDiN < spawn.memory.minDiN) {
-                creep.memory.compas = 'north';
-            }
-            else if (numDiW < spawn.memory.minDiW) {
-                creep.memory.compas = 'west'
-            }
-            else if (numDiS < spawn.memory.minDiS) {
-                creep.memory.compas = 'south'
-            }
-            else if (numDiE < spawn.memory.minDiE) {
-                creep.memory.compas = 'east'
+            for (let name in Game.creeps) {
+                var creep = Game.creeps[name];
+                
+                if (numDiN < spawn.memory.minDiN && creep.memory.role == 'distant harvester') {
+                    creep.memory.compas = 'north';
+                }
+                else if (numDiW < spawn.memory.minDiW && creep.memory.role == 'distant harvester') {
+                    creep.memory.compas = 'west';
+                }
+                else if (numDiS < spawn.memory.minDiS && creep.memory.role == 'distant harvester') {
+                    creep.memory.compas = 'south';
+                }
+                else if (numDiE < spawn.memory.minDiE && creep.memory.role == 'distant harvester') {
+                    creep.memory.compas ='east';
+                }
             }
             
             var home = creep.memory.HomeSpawn;
