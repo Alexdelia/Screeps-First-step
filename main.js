@@ -52,7 +52,7 @@ module.exports.loop = function () {
     for (let tower of towers) {
         var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         var notWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART});
-        var lowWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < 300000 && (s.structureType == STRUCTURE_WALL && s.structureType == STRUCTURE_RAMPART)});
+        var lowWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < 300000 && (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART)});
         
         if (target != undefined) {
             tower.attack(target);
@@ -300,29 +300,45 @@ module.exports.loop = function () {
             }
             else if (numDi < minDi) {
                 
+                if (numDiN < spawn.memory.minDiN) {
+                    var compasV = 'north';
+                }
+                else if (numDiW < spawn.memory.minDiW) {
+                    var compasV = 'west';
+                }
+                else if (numDiS < spawn.memory.minDiS) {
+                    var compasV = 'south';
+                }
+                else if (numDiE < spawn.memory.minDiE) {
+                    var compasV = 'east';
+                }
+                else {
+                    var compasV = 'east';
+                }
+                
                 if (energyCap == 300) {
                     name = spawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 550) {
                     name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 800) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 1250) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 1400) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
             }
@@ -418,7 +434,12 @@ module.exports.loop = function () {
         
         // write name of cs spawn with role
         if (!(name < 0)) {
-            console.log('Spawn ' + name + ': ' + NewRole + ', in ' + spawnName);
+            if (NewRole == 'distant harvester') {
+                console.log('Spawn ' + name + ': ' + NewRole + ' ' + compasV + ', in ' + spawnName);
+            }
+            else {
+                console.log('Spawn ' + name + ': ' + NewRole + ', in ' + spawnName);
+            }
         }
     }
 };
