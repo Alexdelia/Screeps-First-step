@@ -1,9 +1,14 @@
+/* todo:
+add range to spawn in var, and put it in: actual=250,  next=500, spawn= <500
+*/
+
+
 var roleHa = require ('role.ha');
 var roleUp = require ('role.up');
 var roleBu = require ('role.bu');
 var roleRe = require ('role.re');
 var roleDi = require ('role.di');
-var roleSdi = require ('role.sdi');
+//var roleSdi = require ('role.sdi');
 
 module.exports.loop = function () {
     // check for memory entries of died creeps by iterating over Memory.creeps
@@ -15,51 +20,11 @@ module.exports.loop = function () {
         }
     }
     
-    for (let spawnName in Game.spawns) {
-        let spawn = Game.spawns[spawnName];
-        let creepsInRoom = spawn.room.find(FIND_MY_CREEPS);
-        
-        for (let name in Game.creeps) {
-            var creep = Game.creeps[name];
-            
-            if (creep.role = 'distant harvester') {
-                
-                Game.spawns.Spawn1.memory.minDiN = 6;
-                Game.spawns.Spawn1.memory.minDiW = 5;
-                Game.spawns.Spawn1.memory.minDiS = 0;
-                Game.spawns.Spawn1.memory.minDiE = 0;
-                
-                var minDiN = Game.spawns.Spawn1.memory.minDiN
-                var minDiW = Game.spawns.Spawn1.memory.minDiW
-                var minDiS = Game.spawns.Spawn1.memory.minDiS
-                var minDiE = Game.spawns.Spawn1.memory.minDiE
-                
-                var minDi = minDiN + minDiW + minDiS + minDiE
-                
-                var numDi = _.sum(Game.creeps, (c) => c.memory.role == 'distant harvester');
-                
-                var numDiN = _.sum(Game.creeps, (c) => c.memory.compas == 'north');
-                var numDiW = _.sum(Game.creeps, (c) => c.memory.compas == 'west');
-                var numDiS = _.sum(Game.creeps, (c) => c.memory.compas == 'south');
-                var numDiE = _.sum(Game.creeps, (c) => c.memory.compas == 'east');
-                
-                var numDi = numDiN + numDiW + numDiS + numDiE
-                
-                if (numDiN < spawn.memory.minDiN) {
-                    creep.memory.compas = 'north';
-                }
-                else if (numDiW < spawn.memory.minDiW) {
-                    creep.memory.compas = 'west'
-                }
-                else if (numDiS < spawn.memory.minDiS) {
-                    creep.memory.compas = 'south'
-                }
-                else if (numDiE < spawn.memory.minDiE) {
-                    creep.memory.compas = 'east'
-                }
-            }
-        }
-    }
+    Game.spawns.Spawn1.memory.minDiN = 6;
+    Game.spawns.Spawn1.memory.minDiW = 5;
+    Game.spawns.Spawn1.memory.minDiS = 0;
+    Game.spawns.Spawn1.memory.minDiE = 0;
+    
     
     for (let name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -86,8 +51,9 @@ module.exports.loop = function () {
     var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
     for (let tower of towers) {
         var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        var notWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL});
-        var lowWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < 300000 && s.structureType == STRUCTURE_WALL})
+        var notWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART});
+        var lowWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (s) => s.hits < 300000 && (s.structureType == STRUCTURE_WALL && s.structureType == STRUCTURE_RAMPART)});
+        
         if (target != undefined) {
             tower.attack(target);
         }
@@ -132,8 +98,12 @@ module.exports.loop = function () {
         var numDiS = _.sum(Game.creeps, (c) => c.memory.compas == 'south');
         var numDiE = _.sum(Game.creeps, (c) => c.memory.compas == 'east');
         
-        var numDi = numDiN + numDiW + numDiS + numDiE
-        
+        var minDiN = Game.spawns.Spawn1.memory.minDiN
+        var minDiW = Game.spawns.Spawn1.memory.minDiW
+        var minDiS = Game.spawns.Spawn1.memory.minDiS
+        var minDiE = Game.spawns.Spawn1.memory.minDiE
+                
+        var minDi = minDiN + minDiW + minDiS + minDiE
         
         /*
         if (energyCap == 300) {
@@ -165,7 +135,7 @@ module.exports.loop = function () {
         
         // transfer to memory of each spawner
         
-        spawn.memory.minHa = 5
+        spawn.memory.minHa = 1
         spawn.memory.minUp = 4
         spawn.memory.minBu = 4
         spawn.memory.minRe = 3
@@ -190,12 +160,17 @@ module.exports.loop = function () {
             spawn.memory.minHa = 1
         }
         
+        if (numDi < 1) {
+            spawn.memory.minHa = 2
+            spawn.memory.minUp = 1
+        }
+        
         // last var needed
             if (numUp < 1) {
             spawn.memory.minHa = 1
         }
         if (numBu < 1) {
-            spawn.memory.minHa = 4
+            spawn.memory.minHa = 2
             spawn.memory.minUp = 1
             spawn.memory.minRe = 0
         }
@@ -267,7 +242,7 @@ module.exports.loop = function () {
                         {role: 'harvester', working: false});
                     var NewRole = 'first harvester because all die'};
                 }
-                else if (energyCap <= 1150) {
+                else if (energyCap <= 1250) {
                     // fourth step, 15 extension
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'harvester', working: false});
@@ -308,12 +283,12 @@ module.exports.loop = function () {
                         {role: 'upgrader', working: false});
                     var NewRole = 'upgrader';
                 }
-                else if (energyCap <= 1050) {
+                else if (energyCap <= 1250) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'upgrader', working: false});
                     var NewRole = 'upgrader';
                 }
-                else if (energyCap <= 1300) {
+                else if (energyCap <= 1400) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'upgrader', working: false});
                     var NewRole = 'upgrader';
@@ -321,49 +296,29 @@ module.exports.loop = function () {
             }
             else if (numDi < minDi) {
                 
-                if (numDiN > spawn.memory.minDiN) {
-                    var compasV = 'north';
-                }
-                if (numDiW > spawn.memory.minDiW) {
-                    var compasV = 'west'
-                }
-                if (numDiS > spawn.memory.minDiS) {
-                    var compasV = 'south'
-                }
-                if (numDiE > spawn.memory.minDiE) {
-                    var compasV = 'east'
-                }
-                if (numDiN >= spawn.memory.minDiN && numDiW >= spawn.memory.minDiW && numDiW >= spawn.memory.minDiW && numDiE >= spawn.memory.minDiE) {
-                    console.log('enough distant harvester on each direction, (compasV return: ' + compasV + ')');
-                    console.log('di north: ' + numDiN);
-                    console.log('di west: ' + numDiW);
-                    console.log('di south: ' + numDiS);
-                    console.log('di east: ' + numDiE);
-                }
-                
                 if (energyCap == 300) {
                     name = spawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 550) {
                     name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
                 else if (energyCap <= 800) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
-                else if (energyCap <= 1050) {
+                else if (energyCap <= 1250) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
-                else if (energyCap <= 1300) {
+                else if (energyCap <= 1400) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
-                        {role: 'distant harvester', working: false, compas: compasV, HomeSpawn: homeSpawn});
+                        {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
                     var NewRole = 'distant harvester';
                 }
             }
@@ -383,12 +338,12 @@ module.exports.loop = function () {
                         {role: 'repairer', working: false});
                     var NewRole = 'repairer';
                 }
-                else if (energyCap <= 1050) {
+                else if (energyCap <= 1250) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'repairer', working: false});
                     var NewRole = 'repairer';
                 }
-                else if (energyCap <= 1300) {
+                else if (energyCap <= 1400) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'repairer', working: false});
                     var NewRole = 'repairer';
@@ -410,12 +365,12 @@ module.exports.loop = function () {
                         {role: 'builder', working: false});
                     var NewRole = 'builder';
                 }
-                else if (energyCap <= 1050) {
+                else if (energyCap <= 1250) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'builder', working: false});
                     var NewRole = 'builder';
                 }
-                else if (energyCap <= 1300) {
+                else if (energyCap <= 1400) {
                     name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                         {role: 'builder', working: false});
                     var NewRole = 'builder';
@@ -459,12 +414,7 @@ module.exports.loop = function () {
         
         // write name of cs spawn with role
         if (!(name < 0)) {
-            if (NewRole == 'distant harvester') {
-                console.log('Spawn ' + name + ': ' + NewRole + ' ' + compasV +', in ' + spawnName);
-            }
-            else {
-                console.log('Spawn ' + name + ': ' + NewRole + ', in ' + spawnName);
-            }
+            console.log('Spawn ' + name + ': ' + NewRole + ', in ' + spawnName);
         }
     }
 };

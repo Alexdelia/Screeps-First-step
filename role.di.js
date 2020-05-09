@@ -4,9 +4,36 @@
         
         for (let spawnName in Game.spawns) {
             let spawn = Game.spawns[spawnName];
-            let creepsInRoom = spawn.room.find(FIND_CREEPS);
+            let creepsInRoom = spawn.room.find(FIND_MY_CREEPS);
             
+            var minDiN = Game.spawns.Spawn1.memory.minDiN
+            var minDiW = Game.spawns.Spawn1.memory.minDiW
+            var minDiS = Game.spawns.Spawn1.memory.minDiS
+            var minDiE = Game.spawns.Spawn1.memory.minDiE
             
+            var minDi = minDiN + minDiW + minDiS + minDiE
+            
+            var numDi = _.sum(Game.creeps, (c) => c.memory.role == 'distant harvester');
+            
+            var numDiN = _.sum(Game.creeps, (c) => c.memory.compas == 'north');
+            var numDiW = _.sum(Game.creeps, (c) => c.memory.compas == 'west');
+            var numDiS = _.sum(Game.creeps, (c) => c.memory.compas == 'south');
+            var numDiE = _.sum(Game.creeps, (c) => c.memory.compas == 'east');
+            
+            var numDi = numDiN + numDiW + numDiS + numDiE
+            
+            if (numDiN < spawn.memory.minDiN) {
+                creep.memory.compas = 'north';
+            }
+            else if (numDiW < spawn.memory.minDiW) {
+                creep.memory.compas = 'west'
+            }
+            else if (numDiS < spawn.memory.minDiS) {
+                creep.memory.compas = 'south'
+            }
+            else if (numDiE < spawn.memory.minDiE) {
+                creep.memory.compas = 'east'
+            }
             
             var home = creep.memory.HomeSpawn;
             var cut = [];
@@ -86,12 +113,26 @@
                     // a property called filter which can be a function
                     // we use the arrow operator to define it
                     filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                                 || s.structureType == STRUCTURE_EXTENSION
-                                 || s.structureType == STRUCTURE_TOWER)
+                                 || s.structureType == STRUCTURE_EXTENSION)
                                  && s.energy < s.energyCapacity
                     });
+                    var findTower = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    // the second argument for findClosestByPath is an object which takes
+                    // a property called filter which can be a function
+                    // we use the arrow operator to define it
+                    filter: (s) => (s.structureType == STRUCTURE_TOWER)
+                                 && s.energy < s.energyCapacity
+                    });
+                    
+                    if (findTower != undefined) {
+                        // try to transfer energy, if it is not in range
+                        if (creep.transfer(findTower, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            // move towards it
+                            creep.moveTo(findTower);
+                        }
+                    }
                     // if we found one
-                    if (structure != undefined) {
+                    else if (structure != undefined) {
                         // try to transfer energy, if it is not in range
                         if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                             // move towards it
@@ -117,9 +158,17 @@
                 if (creep.room.name == outside) {            
                     // find closest source
                     creep.say('📥');
+                    
+                    var dropSource = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
                     var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
                     // try to harvest energy, if the source is not in range
-                    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    if(dropSource != undefined) {
+                        if(creep.pickup(dropSource) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(dropSource, {visualizePathStyle: {stroke: '#ffffff'}});
+                        }
+                    }
+                    // try to harvest energy, if the source is not in range
+                    else if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                         // move towards the source
                         creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
                     }
