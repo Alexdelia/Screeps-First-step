@@ -436,6 +436,7 @@ module.exports.loop = function () {
         if (!(name < 0)) {
             if (NewRole == 'distant harvester') {
                 console.log('Spawn ' + name + ': ' + NewRole + ' ' + compasV + ', in ' + spawnName);
+                Game.creeps[name].memory.compas = compasV
             }
             else {
                 console.log('Spawn ' + name + ': ' + NewRole + ', in ' + spawnName);
