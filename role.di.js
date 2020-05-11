@@ -78,24 +78,24 @@
                 var NS = cut[2]
                 var NSX = cut[3]
                 
-                var Gn = NSX - 1;
-                var Gw = WEX + 1;
-                var Gs = NSX + 1;
-                var Ge = WEX - 1;
+                var Gn = parseInt(NSX) - 1;
+                var Gw = parseInt(WEX) + 1;
+                var Gs = parseInt(NSX) + 1;
+                var Ge = parseInt(WEX) - 1;
                 
                 // console.log('Base is: ' + WE + WEX + NS + NSX)
                 // console.log('north is: ' + WE + WEX + NS + Gn)
                 
-                if (creep.memory.compas = 'north') {
+                if (creep.memory.compas == 'north') {
                     var outside = WE + WEX + NS + Gn
                 }
-                else if (creep.memory.compas = 'west') {
+                else if (creep.memory.compas == 'west') {
                     var outside = WE + Gw + NS + NSX
                 }
-                else if (creep.memory.compas = 'south') {
+                else if (creep.memory.compas == 'south') {
                     var outside = WE + WEX + NS + Gs
                 }
-                else if (creep.memory.compas = 'east') {
+                else if (creep.memory.compas == 'east') {
                     var outside = WE + Ge + NS + NSX
                 }
                 
@@ -150,7 +150,7 @@
                         }
                     }
                     else {
-                        creep.say('🌏');
+                        creep.say('🌏 ' + home);
                         var exitDir = Game.map.findExit(outside, home);
                         var exit = creep.pos.findClosestByPath(exitDir);
                         creep.moveTo(exit);
@@ -183,7 +183,7 @@
                         }
                     }
                     else {
-                        creep.say('🌏');
+                        creep.say('🌏 ' + outside);
                         var exitDir = Game.map.findExit(home, outside);
                         var exit = creep.pos.findClosestByPath(exitDir);
                         creep.moveTo(exit)

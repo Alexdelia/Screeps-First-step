@@ -32,6 +32,9 @@ module.exports = {
             let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
             });
+            let containerV = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: s => s.structureType == STRUCTURE_CONTAINER
+            });
             
             if (dropSource != undefined) {
                 if(creep.pickup(dropSource) == ERR_NOT_IN_RANGE) {
@@ -39,7 +42,7 @@ module.exports = {
                 }
             }
             else if (container != undefined) {
-                if (creep.withdraw(container) == ERR_NOT_IN_RANGE) {
+                if (creep.withdraw(container,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     // move towards the source
                     creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
@@ -50,9 +53,9 @@ module.exports = {
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
-            else if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            else if (creep.withdraw(containerV, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 // move towards the source
-                creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.moveTo(containerV, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         }
     }
