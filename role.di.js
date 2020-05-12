@@ -123,7 +123,7 @@
                                      || s.structureType == STRUCTURE_EXTENSION
                                      || s.structureType == STRUCTURE_CONTAINER)
                                      && (s.energy < s.energyCapacity 
-                                     || s.store.energy < s.store.energy)
+                                     || s.store.energy < s.store.energyCapacity)
                         });
                         var findTower = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                         // the second argument for findClosestByPath is an object which takes
@@ -131,6 +131,9 @@
                         // we use the arrow operator to define it
                         filter: (s) => (s.structureType == STRUCTURE_TOWER)
                                      && s.energy < s.energyCapacity
+                        });
+                        var bank = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                            filter: (s) => (s.structureType == STRUCTURE_STORAGE)
                         });
                         
                         if (findTower != undefined) {
@@ -146,6 +149,12 @@
                             if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                                 // move towards it
                                 creep.moveTo(structure);
+                            }
+                        }
+                        else if (bank != undefined) {
+                            if (creep.transfer(bank, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                // move towards it
+                                creep.moveTo(bank);
                             }
                         }
                     }

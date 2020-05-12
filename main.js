@@ -23,8 +23,8 @@ module.exports.loop = function () {
         }
     }
     
-    Game.spawns.Spawn1.memory.minDiN = 2;
-    Game.spawns.Spawn1.memory.minDiW = 1;
+    Game.spawns.Spawn1.memory.minDiN = 3;
+    Game.spawns.Spawn1.memory.minDiW = 2;
     Game.spawns.Spawn1.memory.minDiS = 0;
     Game.spawns.Spawn1.memory.minDiE = 0;
     
@@ -151,12 +151,24 @@ module.exports.loop = function () {
             spawn.memory.minMi = spawn.room.find(FIND_SOURCES).length;
             spawn.memory.minTr = spawn.memory.minMi + 1;
             spawn.memory.minHa = 0;
-            spawn.memory.minUp = 2;
+            spawn.memory.minUp = 1;
             spawn.memory.minBu = 3;
             spawn.memory.minRe = 1;
             
             if (spawn.memory.minMi == 0) {
                 spawn.memory.minHa = 1
+            }
+            
+            // spawn more upgrader if storage is huge
+            
+            var X = 5000
+            
+            var bankX = spawn.room.find(FIND_STRUCTURES, {
+                filter: (s) => s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > X
+            });
+            
+            if (bankX != undefined) {
+                spawn.memory.minUp = (spawn.memory.minUp + (Math.floor(spawn.room.storage.store.energy / X)));
             }
             
             // spawn
@@ -191,8 +203,8 @@ module.exports.loop = function () {
                 else if (numUp < spawn.memory.minUp) {
                     if (energyCap >= 1500) {
                         // try to spawn one upgrader
-                        // 10 Work part, 6 Carry, 4 move : 1500 energy
-                        name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
+                        // 9 Work part, 7 Carry, 5 move : 1500 energy
+                        name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                     }
                     else {

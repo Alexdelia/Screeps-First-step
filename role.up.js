@@ -30,7 +30,10 @@ module.exports = {
             var dropSource = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
             var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
             let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+                filter: s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 500
+            });
+            var bank = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+               filter: (s) => (s.structureType == STRUCTURE_STORAGE) 
             });
             let containerV = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: s => s.structureType == STRUCTURE_CONTAINER
@@ -53,9 +56,9 @@ module.exports = {
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
-            else if (creep.withdraw(containerV, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            else if (creep.withdraw(bank, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 // move towards the source
-                creep.moveTo(containerV, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.moveTo(bank, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         }
     }
