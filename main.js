@@ -1,8 +1,3 @@
-/* todo:
-add range to spawn in var, and put it in: actual=250,  next=500, spawn= <500
-*/
-
-
 var roleHa = require ('role.ha');
 var roleUp = require ('role.up');
 var roleBu = require ('role.bu');
@@ -131,6 +126,17 @@ module.exports.loop = function () {
         var minDiE = Game.spawns.Spawn1.memory.minDiE
                 
         var minDi = minDiN + minDiW + minDiS + minDiE
+        
+        // level of energy capacity:
+        
+        var E0 = 300;
+        var ec = 50
+        var ec5 = ec * 5;
+        var E5 = ec5 + E0;
+        var E10 = ec5 + E5;
+        var E15 = ec5 + E10;
+        var E20 = ec5 + E15;
+        var E25 = ec5 + E20;
         
         /*
         if (energyCap == 300) {
@@ -301,12 +307,12 @@ module.exports.loop = function () {
             spawn.memory.minBu = 4
             spawn.memory.minRe = 3
             
-            if (energyCap == 300) {
+            if (energyCap == E0) {
                 spawn.memory.minHa = 10    
             }
             
-            if (energyCap <= 550) {
-                spawn.memory.minHa = 2
+            if (energyCap <= E5) {
+                spawn.memory.minHa = 5
                 spawn.memory.minUp = 4
                 spawn.memory.minBu = 1
                 spawn.memory.minRe = 2
@@ -370,7 +376,7 @@ module.exports.loop = function () {
             if (name == undefined) {
                 if (numHa < spawn.memory.minHa) {
                     // try to spawn one harvester
-                    if (energyCap <=400) {
+                    if (energyCap < E5) {
                         // First step, no extension
                         name = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                             {role: 'harvester', working: false});
@@ -382,7 +388,7 @@ module.exports.loop = function () {
                             {role: 'harvester', working: false});
                         var NewRole = 'first harvester because all die'};
                     }
-                    else if (energyCap <= 650) {
+                    else if (energyCap < E10) {
                         // Second step, 5 extension
                         name = spawn.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,
                             {role: 'harvester', working: false});
@@ -394,7 +400,7 @@ module.exports.loop = function () {
                             {role: 'harvester', working: false});
                         var NewRole = 'first harvester because all died'};
                     }
-                    else if (energyCap <= 900) {
+                    else if (energyCap < E15) {
                         // Third step, 10 extension
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                             {role: 'harvester', working: false});
@@ -406,7 +412,7 @@ module.exports.loop = function () {
                             {role: 'harvester', working: false});
                         var NewRole = 'first harvester because all die'};
                     }
-                    else if (energyCap <= 1250) {
+                    else if (energyCap < E20) {
                         // fourth step, 15 extension
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'harvester', working: false});
@@ -418,7 +424,7 @@ module.exports.loop = function () {
                             {role: 'harvester', working: false});
                         var NewRole = 'first harvester because all die'};
                     }
-                    else if (energyCap <= 1400) {
+                    else if (energyCap < E25) {
                         // fifth step, 20 extension
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'harvester', working: false});
@@ -432,33 +438,33 @@ module.exports.loop = function () {
                     }
                 }
                 else if (numUp < spawn.memory.minUp) {
-                    if (energyCap == 300) {
+                    if (energyCap < E5) {
                         name = spawn.createCreep([WORK,CARRY,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                         var NewRole = 'upgrader';
                     }
-                    else if (energyCap <= 550) {
+                    else if (energyCap < E10) {
                         name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                         var NewRole = 'upgrader';
                     }
-                    else if (energyCap <= 800) {
+                    else if (energyCap < E15) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                         var NewRole = 'upgrader';
                     }
-                    else if (energyCap <= 1250) {
+                    else if (energyCap < E20) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                         var NewRole = 'upgrader';
                     }
-                    else if (energyCap <= 1400) {
+                    else if (energyCap < E25) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'upgrader', working: false});
                         var NewRole = 'upgrader';
                     }
                 }
-                else if (numDi < minDi && energyCap >= 550) {
+                else if (numDi < minDi && energyCap >= E5) {
                     /*
                     if (numDiN < spawn.memory.minDiN) {
                         var compasV = 'north';
@@ -476,7 +482,7 @@ module.exports.loop = function () {
                         var compasV = 'east';
                     }
                     */
-                    if ((energyCap >= 550) && (energyCap < 900)) {
+                    if ((energyCap >= E5) && (energyCap < E10)) {
                         if (numDiN < minDiN) {
                         name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
                             {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
@@ -501,7 +507,7 @@ module.exports.loop = function () {
                             console.log("if this got print that's bad");
                         }
                     }
-                    else if (energyCap >= 900) {
+                    else if (energyCap >= E10) {
                         if (numDiN < minDiN) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
@@ -528,54 +534,54 @@ module.exports.loop = function () {
                     }
                 }
                 else if (numRe < spawn.memory.minRe) {
-                    if (energyCap == 300) {
+                    if (energyCap < E5) {
                         name = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                             {role: 'repairer', working: false});
                         var NewRole = 'repairer';
                     }
-                    else if (energyCap <= 550) {
+                    else if (energyCap < E10) {
                         name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
                             {role: 'repairer', working: false});
                         var NewRole = 'repairer';
                     }
-                    else if (energyCap <= 800) {
+                    else if (energyCap < E15) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                             {role: 'repairer', working: false});
                         var NewRole = 'repairer';
                     }
-                    else if (energyCap <= 1250) {
+                    else if (energyCap < E20) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'repairer', working: false});
                         var NewRole = 'repairer';
                     }
-                    else if (energyCap <= 1400) {
+                    else if (energyCap < E25) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'repairer', working: false});
                         var NewRole = 'repairer';
                     }
                 }
                 else if (numBu < spawn.memory.minBu) {
-                    if (energyCap == 300) {
+                    if (energyCap < E5) {
                         name = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined,
                             {role: 'builder', working: false});
                         var NewRole = 'builder';
                     }
-                    else if (energyCap <= 550) {
+                    else if (energyCap < E10) {
                         name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
                             {role: 'builder', working: false});
                         var NewRole = 'builder';
                     }
-                    else if (energyCap <= 800) {
+                    else if (energyCap < E15) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,
                             {role: 'builder', working: false});
                         var NewRole = 'builder';
                     }
-                    else if (energyCap <= 1250) {
+                    else if (energyCap < E20) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'builder', working: false});
                         var NewRole = 'builder';
                     }
-                    else if (energyCap <= 1400) {
+                    else if (energyCap < E25) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'builder', working: false});
                         var NewRole = 'builder';
