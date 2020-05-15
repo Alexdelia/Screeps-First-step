@@ -18,11 +18,10 @@ module.exports = {
             creep.say('⚡')
             // instead of upgraderController we could also use:
             // if (creep.transfer(creep.room.controller, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            
             // try to upgrade the controller
-            if (creep.upgradeController(Game.getObjectById('5bbcab839099fc012e633aaa')) == ERR_NOT_IN_RANGE) {
+            if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 // if not in range, move towards the controller
-                creep.moveTo(Game.getObjectById('5bbcab839099fc012e633aaa'), {visualizePathStyle: {stroke: '#15ff00'}});
+                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#15ff00'}});
             }
         }
         // if creep is supposed to harvest energy from source
@@ -50,15 +49,17 @@ module.exports = {
                     creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
+            else if (bank != undefined) {
+                if (creep.withdraw(bank, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    // move towards the source
+                    creep.moveTo(bank, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+            }
             else if (source != undefined) {
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     // move towards the source
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
-            }
-            else if (creep.withdraw(bank, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                // move towards the source
-                creep.moveTo(bank, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         }
     }
