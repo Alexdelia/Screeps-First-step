@@ -458,7 +458,7 @@ module.exports.loop = function () {
                         var NewRole = 'upgrader';
                     }
                 }
-                else if (numDi < minDi) {
+                else if (numDi < minDi && energyCap >= 550) {
                     /*
                     if (numDiN < spawn.memory.minDiN) {
                         var compasV = 'north';
@@ -476,7 +476,7 @@ module.exports.loop = function () {
                         var compasV = 'east';
                     }
                     */
-                    if (energyCap <= 550) {
+                    if ((energyCap >= 550) && (energyCap < 900)) {
                         if (numDiN < minDiN) {
                         name = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined,
                             {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
@@ -501,7 +501,7 @@ module.exports.loop = function () {
                             console.log("if this got print that's bad");
                         }
                     }
-                    else if (energyCap <= 900) {
+                    else if (energyCap >= 900) {
                         if (numDiN < minDiN) {
                         name = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined,
                             {role: 'distant harvester', working: false, compas: 'north', HomeSpawn: homeSpawn});
